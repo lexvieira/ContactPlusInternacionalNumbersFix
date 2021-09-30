@@ -5,15 +5,33 @@ import {
   Platform,
   PermissionsAndroid,
   StyleSheet,
+  ScrollView,
+  StatusBar,
+  SafeAreaView,
+  Dimensions,
 } from 'react-native';
 import {Contact} from 'react-native-contacts';
 import ContactServices from '../../services';
+import BackupContacts from '../backupcontacts';
+
+const SCREEN_HEIGHT: number = Dimensions.get('screen').height; // device height
+const STATUS_BAR_HEIGHT: number = StatusBar.currentHeight;
+const WINDOW_HEIGHT: number = Dimensions.get('window').height;
+const NAVIGATION_BAR_HEIGHT: number =
+  SCREEN_HEIGHT - (WINDOW_HEIGHT + STATUS_BAR_HEIGHT);
 
 const Home = () => {
   const [contactList, setContactList] = useState<Contact[]>();
   // const [firstContact, setFirstContact] = useState<Contact[]>();
   const [totalContacts, setTotalContacts] = useState(0);
   const [totalRerenders, setTotalRerenders] = useState(0);
+
+  console.log('Dimmenstion Scrren: ', SCREEN_HEIGHT);
+  console.log('Window Screen: ', WINDOW_HEIGHT);
+  console.log('Status Bar Height: ', STATUS_BAR_HEIGHT);
+  console.log('Navigation Bar Height: ', NAVIGATION_BAR_HEIGHT);
+
+  //Calc the Screen Height - (Window Height - Status Bar.)
 
   const platform = Platform.OS.toString();
 
@@ -43,9 +61,9 @@ const Home = () => {
             setTotalContacts(contacts.length);
             console.log(contacts[0]);
             setTotalRerenders(totalRerenders + 1);
-            if (contacts[0].phoneNumbers.number[0]?.substring(0, 1) !== '+'){
-              updateContactsInternationalCode(contacts[0]);
-            }
+            // if (contacts[0].phoneNumbers.number[0]?.substring(0, 1) !== '+') {
+            //   //updateContactsInternationalCode(contacts[0]);
+            // }
           })
           .catch(err => {
             if (err) {
@@ -130,73 +148,95 @@ const Home = () => {
     getContacts();
   }, []);
 
-  //   setFirstContact([...firstContact, contactList[0]]);
-  //   console.log('First Contact:');
-  //   console.log(firstContact[0]);
-  //   console.log(contactList[0]);
-
   return (
     <>
       <View>
         <Text style={styles.textDefaultTitle}>Home Component</Text>
-        <View>
-          {/* <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} /> */}
-          <Text style={styles.textDefaultNormal}>
-            Contacts Validation React
-          </Text>
-          <Text style={styles.textDefaultNormal}>
-            Using React-native-contacts
-          </Text>
-          <Text style={styles.textDefaultNormal}>
-            Platform:{' '}
-            {platform !== '' ? platform.toUpperCase() : 'Unindentified'}
-          </Text>
-          <View>
-            <Text style={styles.textDefaultNormal}>Contact Details</Text>
-            <Text style={styles.textDefaultNormal}>
-              Total Contacts Registred: {totalContacts}
-            </Text>
-            <Text style={styles.textDefaultNormal}>
-              Total Rerenders: {totalRerenders}
-            </Text>
-            {contactList?.map((contacts, index) => {
-              if (index <= 10) {
-                return (
-                  <View key={String(index)}>
-                    <Text style={styles.textDefaultNormal}>
-                      {contacts.givenName}
-                    </Text>
-                    <Text style={styles.textDefaultNormal}>
-                      Phone Number: {`${contacts.phoneNumbers[0].number}`}
-                    </Text>
-                    <Text style={styles.textDefaultNormal}>
-                      Validation:{' '}
-                      {`${verifyContactsInternationalCode(
-                        contacts.phoneNumbers[0].number,
-                      )}`}
-                    </Text>
-                  </View>
-                );
-              }
-            })}
-            {/* <Text>Name: {firstContact.givenName} </Text>
-          <Text>Name: {firstContact.familyName} </Text>
-          <Text>Phone Number: {firstContact.phoneNumbers[0].number} </Text>
-          <Text>Name: {firstContact.recordID} </Text> */}
-          </View>
-        </View>
+        {/* <BackupContacts /> */}
+        <SafeAreaView style={styles.containerScroll}>
+          <ScrollView style={styles.scrollView}>
+            <View>
+              {/* <StatusBar barStyle="light-content" /> */}
+              {/* <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} /> */}
+              <Text style={styles.textDefaultNormal}>
+                Contacts Validation React
+              </Text>
+              <Text style={styles.textDefaultNormal}>
+                Using React-native-contacts
+              </Text>
+              <Text style={styles.textDefaultNormal}>
+                Platform:{' '}
+                {platform !== '' ? platform.toUpperCase() : 'Unindentified'}
+              </Text>
+              <View>
+                <Text style={styles.textDefaultNormal}>Contact Details</Text>
+                <Text style={styles.textDefaultNormal}>
+                  Total Contacts Registred: {totalContacts}
+                </Text>
+                <Text style={styles.textDefaultNormal}>
+                Status Bar Height: {StatusBar.currentHeight}
+                </Text>
+                <Text style={styles.textDefaultNormal}>
+                  Total Rerenders: {totalRerenders}
+                </Text>
+                {contactList?.map((contacts, index) => {
+                  if (index <= 20) {
+                    return (
+                      <View key={String(index)}>
+                        <Text style={styles.textDefaultNormal}>
+                          {contacts.givenName}
+                        </Text>
+                        {contacts.phoneNumbers.map((phoneNumber, indexPhoneNumber) => {
+                            return (
+                              <View key={String(indexPhoneNumber)}>
+                                <Text>
+                                  Number({phoneNumber.label}):{' '}
+                                  {phoneNumber.number}
+                                  {`\nStatus: - ${verifyContactsInternationalCode(
+                                    phoneNumber.number,
+                                  )}`}
+                                </Text>
+                              </View>
+                            );
+                        })}
+                      </View>
+                    );
+                  }
+                })}
+                {/* <Text>Name: {firstContact.givenName} </Text>
+              <Text>Name: {firstContact.familyName} </Text>
+              <Text>Phone Number: {firstContact.phoneNumbers[0].number} </Text>
+              <Text>Name: {firstContact.recordID} </Text> */}
+              </View>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
       </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  containerScroll: {
+    flex: 1,
+    paddingTop: StatusBar.currentHeight,
+    marginBottom: NAVIGATION_BAR_HEIGHT + 20,
+  },
   container: {
     // flex: 1,
     // alignItems: 'center',
     // justifyContent: 'center',
     color: '#FFF',
     backgroundColor: '#000',
+  },
+  itemsContainer: {
+    flexDirection: 'row',
+    marginTop: 16,
+    marginBottom: 32,
+  },
+  scrollView: {
+    backgroundColor: 'blue',
+    marginHorizontal: 20,
   },
   textDefaultTitle: {
     marginTop: 10,
@@ -205,7 +245,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   textDefaultNormal: {
-    marginTop: 10,
     color: '#fff',
     fontSize: 13,
   },
