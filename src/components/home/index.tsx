@@ -152,7 +152,7 @@ const Home = () => {
     <>
       <View>
         <Text style={styles.textDefaultTitle}>Home Component</Text>
-        {/* <BackupContacts /> */}
+        <BackupContacts />
         <SafeAreaView style={styles.containerScroll}>
           <ScrollView style={styles.scrollView}>
             <View>
