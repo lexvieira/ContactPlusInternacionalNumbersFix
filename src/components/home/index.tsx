@@ -19,6 +19,7 @@ const STATUS_BAR_HEIGHT: number = StatusBar.currentHeight;
 const WINDOW_HEIGHT: number = Dimensions.get('window').height;
 const NAVIGATION_BAR_HEIGHT: number =
   SCREEN_HEIGHT - (WINDOW_HEIGHT + STATUS_BAR_HEIGHT);
+const SCREEN_WIDTH: number = Dimensions.get('screen').width;
 
 const Home = () => {
   const [contactList, setContactList] = useState<Contact[]>();
@@ -152,7 +153,7 @@ const Home = () => {
     <>
       <View>
         <Text style={styles.textDefaultTitle}>Home Component</Text>
-        <BackupContacts />
+        <BackupContacts contactsBackup={contactList} />
         <SafeAreaView style={styles.containerScroll}>
           <ScrollView style={styles.scrollView}>
             <View>
@@ -190,7 +191,8 @@ const Home = () => {
                             return (
                               <View key={String(indexPhoneNumber)}>
                                 <Text>
-                                  Number({phoneNumber.label}):{' '}
+                                  id:{`${phoneNumber.id}`} - Number(
+                                  {`${phoneNumber.label}): `}
                                   {phoneNumber.number}
                                   {`\nStatus: - ${verifyContactsInternationalCode(
                                     phoneNumber.number,
@@ -198,7 +200,8 @@ const Home = () => {
                                 </Text>
                               </View>
                             );
-                        })}
+                          },
+                        )}
                       </View>
                     );
                   }
@@ -221,6 +224,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: StatusBar.currentHeight,
     marginBottom: NAVIGATION_BAR_HEIGHT + 20,
+    width: SCREEN_WIDTH,
   },
   container: {
     // flex: 1,
