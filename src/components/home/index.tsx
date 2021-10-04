@@ -14,12 +14,14 @@ import {Contact} from 'react-native-contacts';
 import ContactServices from '../../services';
 import BackupContacts from '../backupcontacts';
 
-const SCREEN_HEIGHT: number = Dimensions.get('screen').height; // device height
 const STATUS_BAR_HEIGHT: number = StatusBar.currentHeight;
+const SCREEN_HEIGHT: number = Dimensions.get('screen').height; // device height
+const SCREEN_WIDTH: number = Dimensions.get('screen').width;
+
 const WINDOW_HEIGHT: number = Dimensions.get('window').height;
 const NAVIGATION_BAR_HEIGHT: number =
   SCREEN_HEIGHT - (WINDOW_HEIGHT + STATUS_BAR_HEIGHT);
-const SCREEN_WIDTH: number = Dimensions.get('screen').width;
+
 
 const Home = () => {
   const [contactList, setContactList] = useState<Contact[]>();
@@ -27,8 +29,9 @@ const Home = () => {
   const [totalContacts, setTotalContacts] = useState(0);
   const [totalRerenders, setTotalRerenders] = useState(0);
 
-  console.log('Dimmenstion Scrren: ', SCREEN_HEIGHT);
-  console.log('Window Screen: ', WINDOW_HEIGHT);
+  console.log('SCREEN_HEIGHT: ', SCREEN_HEIGHT);
+  console.log('SCREEN_WIDTH: ', SCREEN_WIDTH);
+  console.log('WINDOW_HEIGHT: ', WINDOW_HEIGHT);
   console.log('Status Bar Height: ', STATUS_BAR_HEIGHT);
   console.log('Navigation Bar Height: ', NAVIGATION_BAR_HEIGHT);
 
@@ -224,7 +227,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: StatusBar.currentHeight,
     marginBottom: NAVIGATION_BAR_HEIGHT + 20,
-    width: SCREEN_WIDTH,
+    // width: SCREEN_WIDTH,
   },
   container: {
     // flex: 1,

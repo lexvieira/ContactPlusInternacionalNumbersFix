@@ -28,14 +28,16 @@ const BackupContacts: React.FC<Props> = ({contactsBackup}: Props) => {
 
   const readContactsBackup = async () => {
     try {
-      const contact_Backup_data: any = await AsyncStorage.getItem('@contact_Backup');
+      const contact_Backup_data: any = await AsyncStorage.getItem(
+        '@contact_Backup',
+      );
       const contact_Backup_list: Contact[] = null
         ? JSON.parse(contact_Backup_data)
         : null;
-      contactsBackup.push(contact_Backup_list);
+      contactsBackup.push(...contact_Backup_list);
       Alert.alert(
-        'Backup Contacts',
-        `Total Contacts Backuped: ${contactsBackup.length}`,
+        'Backup Contacts (Recovered)',
+        `Total Contacts Loaded: ${contact_Backup_list.length}`,
       );
     } catch (e) {
       console.log(`Error Return: ${e}`);
@@ -44,7 +46,9 @@ const BackupContacts: React.FC<Props> = ({contactsBackup}: Props) => {
 
   const clearContactsBackup = async () => {
     try {
-      await AsyncStorage.clear().then(console.log('Contacts Backup cleared!'));
+      await AsyncStorage.clear().then(() => {
+        console.log('Contacts Backup cleared!');
+      });
     } catch (e) {
       console.log(`Error Return: ${e}`);
     }
@@ -66,7 +70,10 @@ const BackupContacts: React.FC<Props> = ({contactsBackup}: Props) => {
         Backup Contacts Database before Change Contacts
       </Text>
       <Text style={styles.textDefaultNormal}>
-        Total Items Backuped: {`${contactsBackup.length}`}
+        Backup contacts save:{' '}
+        {contactsBackup
+          ? 'YES, Total Contacts: ' + contactsBackup.length
+          : 'No Backup Active'}
       </Text>
       <Button
         title="Backup Contacts"
@@ -74,18 +81,23 @@ const BackupContacts: React.FC<Props> = ({contactsBackup}: Props) => {
           backupContactsLocally(contactsBackup);
         }}
       />
+      <Text style={styles.textDefaultNormal}>Load existent Backup</Text>
       <Button
         title="Read Backup Contacts"
         onPress={() => {
           readContactsBackup();
         }}
       />
+      <Text style={styles.textDefaultNormal}>
+        Remove a existent key from the backup (Insert Key Name)
+      </Text>
       <Button
         title="Click to Remove Key Backup Contacts"
         onPress={() => {
           removeKey('storage_Key');
         }}
       />
+      <Text style={styles.textDefaultNormal}>Clear existents Backups</Text>
       <Button
         title="Clear Backup"
         onPress={() => {
