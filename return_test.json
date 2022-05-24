@@ -1,0 +1,71 @@
+    [{
+        "phoneNumbers": [
+            {
+                "id": "10",
+                "label": "home",
+                "number": "+551125691798"
+            }
+        ],
+        "postalAddresses": [],
+        "thumbnailPath": "",
+        "department": "",
+        "jobTitle": "",
+        "emailAddresses": [],
+        "urlAddresses": [],
+        "suffix": null,
+        "company": "",
+        "imAddresses": [],
+        "note": null,
+        "middleName": "",
+        "displayName": "Magaiver Pizzaria",
+        "familyName": "Pizzaria",
+        "givenName": "Magaiver",
+        "prefix": null,
+        "hasThumbnail": false,
+        "rawContactId": "57897",
+        "recordID": "58798"
+    },
+    {
+        "phoneNumbers": [
+            {
+                "id": "10",
+                "label": "other",
+                "number": "Magaiver Pizzaria"
+            },
+            {
+                "id": "196666",
+                "label": "home",
+                "number": "+551125691798"
+            }
+        ],
+        "postalAddresses": [],
+        "thumbnailPath": "",
+        "department": "",
+        "jobTitle": "",
+        "emailAddresses": [],
+        "urlAddresses": [],
+        "suffix": null,
+        "company": "",
+        "imAddresses": [],
+        "note": "Magaiver Pizzaria",
+        "middleName": "",
+        "displayName": "Magaiver Pizzaria",
+        "familyName": "Pizzaria",
+        "givenName": "Magaiver",
+        "prefix": null,
+        "hasThumbnail": false,
+        "rawContactId": "57897",
+        "recordID": "58798"
+    },
+    {
+        "id": "5",
+        "label": "home",
+        "number": "+551130468237"
+    },
+    {
+        "id": "196886",
+        "label": "home",
+        "number": "+551125691798"
+    }
+]
+    

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {Alert, Button, StyleSheet, Text, View} from 'react-native';
 // import {openDatabase} from 'react-native-sqlite-storage';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -10,6 +10,10 @@ interface Props {
 
 const BackupContacts: React.FC<Props> = ({contactsBackup}: Props) => {
   //   var db = openDatabase({name: 'ContactsBackupPlus.db'});
+
+  const [backupExist, setBackupExist] = useState(false);
+  const [totalContacts, setTotalContacts] = useState(0);
+  const [backupContacts, setbackupContacts] = useState<Contact[]>([]);
 
   const backupContactsLocally = async (contacts: Contact[]) => {
     try {
@@ -31,13 +35,10 @@ const BackupContacts: React.FC<Props> = ({contactsBackup}: Props) => {
       const contact_Backup_data: any = await AsyncStorage.getItem(
         '@contact_Backup',
       );
-      const contact_Backup_list: Contact[] = null
-        ? JSON.parse(contact_Backup_data)
-        : null;
-      contactsBackup.push(...contact_Backup_list);
+      contactsBackup = JSON.parse(contact_Backup_data);
       Alert.alert(
         'Backup Contacts (Recovered)',
-        `Total Contacts Loaded: ${contact_Backup_list.length}`,
+        `Total Contacts Loaded: ${contactsBackup.length}`,
       );
     } catch (e) {
       console.log(`Error Return: ${e}`);
@@ -56,23 +57,43 @@ const BackupContacts: React.FC<Props> = ({contactsBackup}: Props) => {
 
   const removeKey = async (keyString: string) => {
     try {
-      await AsyncStorage.removeItem(`@${keyString}`).then(
-        console.log('Key Removed'),
-      );
+      await AsyncStorage.removeItem(`@${keyString}`);
+      console.log(`Key ${keyString} Removed`)            
+      return true;
     } catch (e) {
-      console.log(`Error Return: ${e}`);
+      console.log(`Error Removing Backup ${keyString}: ${e}`);
     }
   };
 
+
+  const checkBackup = async() => {
+    const contact_Backup_data: any = await AsyncStorage.getItem(
+      '@contact_Backup',
+    );
+    
+    if (!contact_Backup_data){
+      console.log("No Backup Active");
+      //backupContactsLocally(contactsBackup);
+    }else{
+      setBackupExist(true);
+      setTotalContacts(JSON.parse(contact_Backup_data).length);
+      setbackupContacts(JSON.parse(contact_Backup_data));
+    }
+  }
+
+  useEffect(() => {
+    // checkBackup();
+  }, [backupExist,totalContacts,backupContacts]);
+
   return (
-    <View>
+    <View style={styles.backupView}>
       <Text style={styles.textDefaultNormal}>
         Backup Contacts Database before Change Contacts
       </Text>
       <Text style={styles.textDefaultNormal}>
         Backup contacts save:{' '}
-        {contactsBackup
-          ? 'YES, Total Contacts: ' + contactsBackup.length
+        {backupExist
+          ? 'YES, Total Contacts: ' + totalContacts
           : 'No Backup Active'}
       </Text>
       <Button
@@ -110,9 +131,15 @@ const BackupContacts: React.FC<Props> = ({contactsBackup}: Props) => {
 
 const styles = StyleSheet.create({
   textDefaultNormal: {
-    color: '#fff',
+    color: '#FFF',
     fontSize: 13,
   },
+  backupView: {
+    borderStyle: 'dashed',
+    borderWidth: 2,
+    borderColor: '#d9d9d9',
+    padding: 5,
+  }
 });
 
 export default BackupContacts;

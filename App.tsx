@@ -12,7 +12,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.textDefaultTitle}>Main Interface</Text>
+      <Text style={styles.textDefaultTitle}>Contact Plus +</Text>
       <Home />
     </View>
   );
