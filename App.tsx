@@ -1,6 +1,8 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import Home from './src/components/home';
+import Splash from './src/components/splash';
+import Routes from './src/routes';
 
 // import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -11,24 +13,13 @@ export default function App() {
   // };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.textDefaultTitle}>Contact Plus +</Text>
-      <Home />
-    </View>
+    <>
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent/>
+      <Routes />    
+    </>    
   );
 }
 //{"company": "", "department": "", "displayName": "Estagio", "emailAddresses": [], "familyName": "", "givenName": "Estagio", "hasThumbnail": false, "imAddresses": [], "jobTitle": "", "middleName": "", "note": null, "phoneNumbers": [{"id": "5", "label": "home", "number": "30468237"}], "postalAddresses": [], "prefix": null, "rawContactId": "57896", "recordID": "58797", "suffix": null, "thumbnailPath": "", "urlAddresses": []}
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    // justifyContent: 'center',
-    backgroundColor: '#000',
-  },
-  textDefaultTitle: {
-    marginTop: 10,
-    color: '#fff',
-    fontWeight: '900',
-    fontSize: 25,
-  },
+
 });

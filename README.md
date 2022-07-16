@@ -15,7 +15,7 @@ Você pode processar contato por contato ou corrigir todos os contatos de uma s�
 
 Quando o aplicativo finalizar o processo se seus contatos do seu país de origem, no meu caso o Brasil receberá o código +55 e 11 para a cidade de São Paulo. Novas melhorias sobre cidades e lista de países são bem-vindas.
 
-<img src="readmefiles/contactplusfixed.jpg" style="width: 20%" >
+<img src="readmefiles/contactplusfixed.jpg" style="width: 20%" > | 
 <img src="readmefiles/contactpluswhatsapp.png" style="width: 20%" >
 
 ## Precisa melhorar

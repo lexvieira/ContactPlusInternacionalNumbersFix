@@ -11,9 +11,11 @@ import {
   Dimensions,
   Button,
   Alert,
+  TextInput,
 } from 'react-native';
 import {Contact} from 'react-native-contacts';
 import ContactServices from '../../services';
+import DefaultStyles from '../../styles/styles';
 import BackupContacts from '../backupcontacts';
 
 const STATUS_BAR_HEIGHT: number | undefined = StatusBar.currentHeight;
@@ -34,7 +36,8 @@ const Home = () => {
   const [contactList, setContactList] = useState<Contact[]>([]);
   const [contactBackupList, setContactBackupList] = useState<Contact[]>([]);
 
-
+  const [countryCode, setCountryCode] = useState("");
+  const [areaCode, setAreaCode] = useState("");  
   // const [firstContact, setFirstContact] = useState<Contact[]>();
   const [totalContacts, setTotalContacts] = useState(0);
   const [totalRerenders, setTotalRerenders] = useState(0);
@@ -54,6 +57,7 @@ const Home = () => {
       ContactServices.getAll()
         .then(contacts => {
           setContactList(contacts);
+          // Check Backup Contacts
           // console.log(contacts[1]);
         })
         .catch(err => {
@@ -85,7 +89,7 @@ const Home = () => {
   }
 
   function updateAllContacts(){
-    messagePopup("Update Contact Plust","This will all the contacts from Brazil on your phone, OK?")
+    messagePopupWithCancel("Update Contact Plust","This will all the contacts from Brazil on your phone, OK?","Cancel","Cancel Update");
     let allContacts = contactList;
     allContacts.forEach((contact, index) => {
       updateContactsInternationalCode(contact);
@@ -99,22 +103,6 @@ const Home = () => {
     contactUpdate = contactList[indexContact];
     messagePopup("Contact Update Manually", contactUpdate.displayName);
     updateContactsInternationalCode(contactUpdate);
-    // let contactUpdateNumbers = contactUpdate.phoneNumbers;
-    // console.log(contactUpdateNumbers.length);
-    // contactUpdateNumbers.forEach((contactNumber, index) => {
-    //   console.log(`${contactNumber.label} - ${contactNumber.number}`);
-    //   //Remove Invalid Numbers/Notes
-    //   if (contactNumber.number == contactUpdate.displayName){
-    //     console.log("Invalid Number");
-    //     contactUpdateNumbers.shift();
-    //   } 
-    // });
-    // // console.log(contactUpdateNumbers);
-    // contactUpdate.phoneNumbers = contactUpdateNumbers;
-    // // Update the contact on the Telephone
-    // ContactDeletePhone(contactList[indexContact]);
-    // ContactAddNewPhone(contactUpdate);
-
   }
 
   function fixContactInfo(contact: Contact){
@@ -132,17 +120,6 @@ const Home = () => {
     contactInfo.givenName = contactInfo.givenName + " (BR)";
     ContactDeletePhone(contact);
     ContactAddNewPhone(contactInfo);
-    //ADD 6 LINES UP TO THE FUNCTION UPDATE CONTACTS
-    //Update Contacts Estagio and Magaiver
-    // if (contactPhoneNumbers[0].number !== contactPhoneNumbers[1].number){
-    //     contactPhoneNumbers[0].number = contactPhoneNumbers[1].number;
-    //     contactPhoneNumbers[0].label = contactPhoneNumbers[1].label;       
-    // }
-    // //After Update
-    // console.log(contactPhoneNumbers[0]);
-    // console.log(contactPhoneNumbers[1]);  
-    // ContactUpdatePhone(contactInfo);
-    // Remove the contact and add a new one
   }
 
   //Fix the international codes from Brazil
@@ -160,21 +137,21 @@ const Home = () => {
         if (phoneNumber.number?.length === 8) {
           console.log('PhoneID:' + contactInfo.recordID);
           console.log('Old Number: ' + phoneNumber.number);
-          phoneNumber.number = '+5511' + phoneNumber.number;
+          phoneNumber.number = `+${countryCode}${areaCode}` + phoneNumber.number;
           // phoneNumber.label = phoneNumber.label;          
           console.log('Updated Number:' + phoneNumber.number);
           contactNeedUpdate = true;
         } else if (phoneNumber.number?.length === 9) {
-          console.log('9 Digits Number: +5511' + phoneNumber.number);
-          phoneNumber.number = '+5511' + phoneNumber.number;
+          console.log(`9 Digits Number:+${countryCode}${areaCode}`+ phoneNumber.number);
+          phoneNumber.number = `+${countryCode}${areaCode}` + phoneNumber.number;
           phoneNumber.label = phoneNumber.label;               
           contactNeedUpdate = true;
         } else if (phoneNumber.number?.length === 10) {
-          if (phoneNumber.number?.substring(0, 2) !== '11') {
-            phoneNumber.number = '+55' + phoneNumber.number;
+          if (phoneNumber.number?.substring(0, 2) !== `${areaCode}`) {
+            phoneNumber.number = `+${countryCode}` + phoneNumber.number;
             contactNeedUpdate = true;
           }
-          console.log('9 Digits Number: +5511' + phoneNumber.number);
+          console.log(`9 Digits Number:+${countryCode}${areaCode}`+ phoneNumber.number);
         }
       }
     });
@@ -259,14 +236,14 @@ const Home = () => {
 
     if (phoneNumber.substring(0, 1) !== '+') {
       if (phoneNumber.length === 8) {
-        phoneNumberUpdate = '+5511' + phoneNumber;
+        phoneNumberUpdate = `+${countryCode}${areaCode}` + phoneNumber;
       } else if (phoneNumber.length === 9) {
-        phoneNumberUpdate = '+5511' + phoneNumber;
+        phoneNumberUpdate = `+${countryCode}${areaCode}` + phoneNumber;
       } else if (phoneNumber.length === 10) {
-        if (phoneNumber.substring(0, 2) !== '11') {
-          phoneNumberUpdate = '+55' + phoneNumber;
+        if (phoneNumber.substring(0, 2) !== areaCode) {
+          phoneNumberUpdate = `+${countryCode}` + phoneNumber;
         }
-        phoneNumberUpdate = '+5511' + phoneNumber;
+        phoneNumberUpdate = `+${countryCode}${areaCode}` + phoneNumber;
       }
       phoneNumberUpdate += ' Need Update';
     } else {
@@ -275,28 +252,41 @@ const Home = () => {
     return phoneNumberUpdate;
   }
 
+   
+  // function onChangeCountryCode(){
+  //   setCountryCode(countryCode)
+  // }
+  // function onChangeAreaCode(){
+  //   console.log(`New Area Code: ${areaCode}`);
+  // }
+
+
   //Simple message return to the user
   function messagePopup(label: string, text: string){
-    Alert.alert(label, text,);
-    // Alert.alert(
-    //   "Alert Title",
-    //   "My Alert Msg",
-    //   [
-    //     {
-    //       text: "Cancel",
-    //       onPress: () => Alert.alert("Cancel Pressed"),
-    //       style: "cancel",
-    //     },
-    //   ],
-    //   {
-    //     cancelable: true,
-    //     onDismiss: () =>
-    //       Alert.alert(
-    //         "This alert was dismissed by tapping outside of the alert dialog."
-    //       ),
-    //   }
-    // );
-    return false; 
+    Alert.alert(label, text);
+  }
+
+  function messagePopupWithCancel(labelAlert: string, textAlert: string, labelCancel: string, textCancel: string){
+      let messageReturn: boolean = true;
+      Alert.alert(
+        labelAlert,
+        textAlert,
+        [
+          {
+            text: "Cancel",
+            onPress: () => {
+              Alert.alert(
+                labelCancel,
+                textCancel,
+              );
+              messageReturn = false;
+              },
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") }
+        ]
+      );
+    return messageReturn; 
   }
 
   useEffect(() => {
@@ -309,42 +299,109 @@ const Home = () => {
   }, [contactBackupList]);
 
   return (
-    <>
+    <SafeAreaView style={styles.containerScroll}>
       <View>
-        <Text style={styles.textDefaultTitle}>Contact Plus - Fix International Numbers</Text>
-        <Button title='Update DDI +55 in All Brazilian Numbers' onPress={() => {updateAllContacts()}}></Button>
-        <BackupContacts contactsBackup={contactBackupList} />
-        <SafeAreaView style={styles.containerScroll}>
-          <ScrollView style={styles.scrollView}>
+        <Text style={[DefaultStyles.textDefaultTitle]}>Corrigir Números Internacionais</Text>
+        <View style={[DefaultStyles.containerVerticalSpace, DefaultStyles.viewAlignOnTop]}>
+          <View style={DefaultStyles.viewRow}>
+            <View style={DefaultStyles.viewColumn}>
+              <Text style={[DefaultStyles.labelDefaultNormal,DefaultStyles.textBold]}>Informe o código do País (Exemplo 55): </Text>
+            </View>
+          </View>
+          <View style={DefaultStyles.viewRow}>
+            <View style={DefaultStyles.viewColumn}>
+              <TextInput
+                  style={[DefaultStyles.textInput]}
+                  onChangeText={setCountryCode}
+                  placeholder="Código do País - Ex: 55"
+                  keyboardType="numeric"        
+                />
+            </View>
+          </View>
+          <View style={[{},DefaultStyles.viewRow]}>
+            <View style={DefaultStyles.viewColumn}>
+              <Text style={[DefaultStyles.labelDefaultNormal, DefaultStyles.textBold]}>Informe o código da área (Exemplo 11)</Text>
+            </View>
+          </View>
+          <View style={[,DefaultStyles.viewRow]}>
+            <View style={DefaultStyles.viewColumn}>
+              <TextInput
+                style={[DefaultStyles.textInput]}
+                onChangeText={setAreaCode}
+                placeholder="Código Área - Ex: 11"
+                keyboardType="numeric"
+              />
+            </View>
+          </View>
+          <View style={[{},DefaultStyles.viewRow]}>
+            <View style={DefaultStyles.viewColumn}>
+              <Text style={[DefaultStyles.labelDefaultNormal, DefaultStyles.textBold]}>Descrição do Contato (Exemplo Fernado Gabriel (BR))</Text>
+            </View>
+          </View>
+          <View style={[,DefaultStyles.viewRow]}>
+            <View style={DefaultStyles.viewColumn}>
+              <TextInput
+                style={[DefaultStyles.textInput]}
+                onChangeText={setAreaCode}
+                placeholder="Descrição Ex: (BR)"
+                keyboardType="default"
+              />
+            </View>
+          </View>
+
+          <View style={[DefaultStyles.viewRow, DefaultStyles.containerVerticalSpace]}>
+            <View style={DefaultStyles.viewColumn}>
+              <Text style={[DefaultStyles.textDefaultNormal, DefaultStyles.textBold]}>Código País: "+" {countryCode} - Código Área: {areaCode} </Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={DefaultStyles.containerVerticalSpace}>
+
+          <View style={DefaultStyles.viewRow}>
+            <View style={DefaultStyles.viewColumn}>
+              <Text style={[DefaultStyles.textDefaultNormal, DefaultStyles.textBold]}>Pressione para atualizar todos os contatos</Text>
+            </View>
+            <View style={DefaultStyles.viewColumn}>
+              <Button title='Atualizar' onPress={() => {updateAllContacts()}}></Button>
+            </View>
+          </View>
+        </View>
+
+        {/* <View style={styles.containerVerticalSpace}>
+         <BackupContacts contactsBackup={contactBackupList} />          
+        </View>
+  */}
+          <ScrollView style={[]}>
             <View>
               {/* <StatusBar barStyle="light-content" /> */}
               {/* <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} /> */}
-              <Text style={styles.textDefaultNormal}>
+              <Text style={DefaultStyles.textDefaultNormal}>
                 Contacts Validation React
               </Text>
-              <Text style={styles.textDefaultNormal}>
+              <Text style={DefaultStyles.textDefaultNormal}>
                 Using React-native-contacts
               </Text>
-              <Text style={styles.textDefaultNormal}>
+              <Text style={DefaultStyles.textDefaultNormal}>
                 Platform:{' '}
                 {platform !== '' ? platform.toUpperCase() : 'Unindentified'}
               </Text>
               <View>
-                <Text style={styles.textDefaultNormal}>Contact Details</Text>
-                <Text style={styles.textDefaultNormal}>
+                <Text style={DefaultStyles.textDefaultNormal}>Contact Details</Text>
+                <Text style={DefaultStyles.textDefaultNormal}>
                   Total Contacts Registred: {totalContacts}
                 </Text>
-                <Text style={styles.textDefaultNormal}>
+                <Text style={[DefaultStyles.textDefaultNormal, DefaultStyles.hideComponents]}>
                 Status Bar Height: {StatusBar.currentHeight}
                 </Text>
-                <Text style={styles.textDefaultNormal}>
+                <Text style={DefaultStyles.textDefaultNormal}>
                   Total Rerenders: {totalRerenders}
                 </Text>
                 {contactList?.map((contacts, index) => {
                   if (index <= 20) {
                     return (
                       <View key={String(index)}>
-                        <Text style={styles.textDefaultNormal}>
+                        <Text style={DefaultStyles.textDefaultNormal}>
                           {contacts.givenName}
                         </Text>
                         {contacts.phoneNumbers.map((phoneNumber: any, indexPhoneNumber) => {
@@ -380,25 +437,27 @@ const Home = () => {
               </View>
             </View>
           </ScrollView>
-        </SafeAreaView>
+
       </View>
-    </>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   containerScroll: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
+    // paddingTop: StatusBar.currentHeight,
     marginBottom: NAVIGATION_BAR_HEIGHT + 20,
+    margin: 5,
+    backgroundColor: '#FFF'
     // width: SCREEN_WIDTH,
   },
   container: {
-    // flex: 1,
+    flex: 1,
     // alignItems: 'center',
     // justifyContent: 'center',
-    color: '#FFF',
-    backgroundColor: '#000',
+    color: '#000',
+    backgroundColor: '#FFF',
   },
   itemsContainer: {
     flexDirection: 'row',
@@ -410,19 +469,17 @@ const styles = StyleSheet.create({
     // marginHorizontal: 5,
     borderStyle: 'dashed',
     borderWidth: 2,
-    borderColor: '#d9d9d9',
+    borderColor: '#FFF',
     padding: 5,    
   },
   textDefaultTitle: {
     marginTop: 10,
-    color: '#fff',
+    color: '#000',
     fontWeight: '900',
     fontSize: 25,
-  },
-  textDefaultNormal: {
-    color: '#fff',
-    fontSize: 13,
-  },
+  }
+
+
 });
 
 export default Home;

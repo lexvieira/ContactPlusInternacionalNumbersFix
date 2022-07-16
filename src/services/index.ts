@@ -92,7 +92,9 @@ class ContactServices {
         }
       });
       return contactStatus;
-  }  
+  }
+  
+  
 }
 
 export default new ContactServices();
