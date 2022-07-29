@@ -25,7 +25,7 @@ const Splash = ({ navigation }: any) => {
                 </Text>                
             </View>  
             <View style={[DefaultStyles.bottomCenter,DefaultStyles.container]}>
-                <Text style={[styles.textDefault, styles.marginDefautElements]}>
+                <Text style={[DefaultStyles.textDefaultInfo, styles.marginDefautElements]}>
                     1⁰ Faça o Backup dos seus contatos
                 </Text>
                 <Button  onPress={() => { navigateToBackup('Backup') }} title="Backup Contacts" >
@@ -49,15 +49,7 @@ const styles = StyleSheet.create({
     buttonNext: {
         backgroundColor: '#FFF'
     },
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        // justifyContent: 'center',
-        padding: 10,
-        textAlign: 'justify',
-        backgroundColor: '#FFF',
-        borderColor: '#219EBC',
-    },
+
     textDefaultTitle: {
         marginTop: 10,
         color: '#219EBC',

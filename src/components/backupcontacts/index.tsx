@@ -3,7 +3,7 @@ import { Alert, Button, PermissionsAndroid, Platform, StyleSheet, Text, View } f
 // import {openDatabase} from 'react-native-sqlite-storage';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Contact } from 'react-native-contacts';
-import ContactServices from '../../services';
+import ContactServices from '../../services/contacts';
 import DefaultStyles from "../../styles/styles";
 import msgService from '../../services/msgService';
 import storage from '../../services/storagedata';
@@ -11,15 +11,15 @@ import storage from '../../services/storagedata';
 // interface Props {
 //   contactsBackup: Contact[];
 // }
-    
+
 // const BackupContacts: React.FC<Props> = ({ contactsBackup }: Props) => {
 
 
 const Backup = ({ navigation }: any) => {
   const platform = Platform.OS.toString();
   const [permissionRead, setpermissionRead] = useState(false);
-  const [permissionWrite, setpermissionWrite] = useState(false);    
-  const [permissionContacts, setpermissionContacts] = useState(false);    
+  const [permissionWrite, setpermissionWrite] = useState(false);
+  const [permissionContacts, setpermissionContacts] = useState(false);
   const [backupExist, setBackupExist] = useState(false);
   const [totalContacts, setTotalContacts] = useState(0);
   const [contactsPhone, setcontactsPhone] = useState<Contact[]>([]);
@@ -31,17 +31,22 @@ const Backup = ({ navigation }: any) => {
   let STORAGE_KEY_CONTACTS_BACKUP_DATETIME = '@date_last_Backup';
 
   useEffect(() => {
+    console.log("Checking Permissions");
     checkPermissions();
+    console.log("Checking Permissions Finish");
   }, []);
 
   useEffect(() => {
-    checkBackup();
-  }, [backupExist,totalBackupContacts,totalContacts]);
-
-  useEffect(() => {
+    console.log("Getting Contacts");
     getContacts();
-  }, []);
+    console.log("Getting Contacts Finish");
+  }, [permissionContacts]);
 
+  // useEffect(() => {
+  //   console.log("Checking Backup");
+  //   // checkBackup();
+  //   console.log("Checking Backup Finish");
+  // }, [backupExist, totalBackupContacts]);
 
   const navigateToBackup = (screen: string) => {
     // msgService.messagePopup("1 - Backup", "Você está sendo redirecionado para a Tela de Backup");
@@ -49,62 +54,42 @@ const Backup = ({ navigation }: any) => {
   }
 
   function getContacts() {
-    if (platform === 'ios') {
-      ContactServices.getAll()
+    if (permissionContacts) {
+      ContactServices.getAllContacts()
         .then(contacts => {
           setcontactsPhone(contacts);
           setTotalContacts(contacts.length);
-          // checkBackup();
+          // Checking Contacts Backup
+          checkBackup(); 
         })
         .catch(err => {
           if (err) {
             throw err;
           }
         });
-    } else if (Platform.OS === 'android') {
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS, {
-        title: 'Contacts',
-        message: 'We need your permission to access your contacts',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      }).then(() => {
-        ContactServices.getAll()
-          .then(contacts => {
-            setcontactsPhone(contacts);
-            setTotalContacts(contacts.length);
-            // Checking Contacts Backup
-            // checkBackup();
-          })
-          .catch(err => {
-            if (err) {
-              throw err;
-            }
-          });
-      });
     }
   }
   //   var db = openDatabase({name: 'ContactsBackupPlus.db'});
 
   const checkPermissions = async () => {
-    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS, {
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS, {
       title: 'Contacts',
       message: 'We need your permission to access your contacts',
       buttonNeutral: 'Ask Me Later',
       buttonNegative: 'Cancel',
       buttonPositive: 'OK',
     }).then(() => {
-      console.log("Permission to Write Contacts Granted");      
+      console.log("Permission to Write Contacts Granted");
       setpermissionContacts(true);
     }).catch(() => {
       console.log(`Permission Denied to Save`);
       msgService.messagePopup(
         'Backup Contacts',
         `Permissões para salvar os contatos negada`,
-      );            
+      );
     });
 
-    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
       title: 'Contacts',
       message: 'Precisamos sua permissão para gravar o Backup dos contatos',
       buttonNeutral: 'Ask Me Later',
@@ -118,10 +103,10 @@ const Backup = ({ navigation }: any) => {
       msgService.messagePopup(
         'Backup Contacts',
         `Permissões para salvar os contatos negada`,
-      );            
+      );
     });
-    
-    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE, {
+
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE, {
       title: 'Contacts',
       message: 'Precisamos sua permissão para ler o Backup dos contatos',
       buttonNeutral: 'Ask Me Later',
@@ -129,16 +114,19 @@ const Backup = ({ navigation }: any) => {
       buttonPositive: 'OK',
     }).then(async () => {
       setpermissionRead(true);
-        console.log("Permission Read agreeded");
+      console.log("Permission Read agreeded");
     }).catch(() => {
       msgService.messagePopup(
         'Backup Contacts',
         `Permissões para ler os contatos negada`,
-      );                  
-    });   
-    
+      );
+    });
+
   }
-  
+
+  // checkPermissions();
+  // getContacts();
+
   const backupContactsLocally = async () => {
     try {
       const contactsJsonFile = JSON.stringify(contactsPhone);
@@ -149,32 +137,33 @@ const Backup = ({ navigation }: any) => {
       let hour_backup = date.getHours();
       let minutes_backup = date.getMinutes();
       let date_format = `${day_backup}/${month_backup}/${year_backup} ${hour_backup}:${minutes_backup}`
-      if (contactsJsonFile.length >= 0){
+      if (contactsJsonFile.length >= 0) {
         try {
-            if (permissionWrite){
-              await AsyncStorage.setItem(STORAGE_KEY_CONTACTS_BACKUP, contactsJsonFile).then(async () => {
-                setBackupExist(true);
-                try{
-                    const readContactsBase: any = await AsyncStorage.getItem(
-                      STORAGE_KEY_CONTACTS_BACKUP,
-                    )
-                    // console.log(readContactsBase);   
-                    setBackupContacts(readContactsBase);
-                } catch (e) {
-                  console.log("Error saving Backup Contacts");
-                }
-              });
-              setDate_last_Backup(date_format);
-              await AsyncStorage.setItem(STORAGE_KEY_CONTACTS_BACKUP_DATETIME, date_format);
-              console.log('Success Saving File');
-            }
-            // const readContactsBase =  await storage.readContactsBackup();
-        } catch (e){
+          if (permissionWrite) {
+            await AsyncStorage.setItem(STORAGE_KEY_CONTACTS_BACKUP, contactsJsonFile).then(async () => {
+              setBackupExist(true);            
+              try {
+                const readContactsBase: any = await AsyncStorage.getItem(
+                  STORAGE_KEY_CONTACTS_BACKUP,
+                )
+                // console.log(readContactsBase);   
+                setBackupContacts(JSON.parse(readContactsBase));
+                setTotalBackupContacts(JSON.parse(readContactsBase).length);
+              } catch (e) {
+                console.log("Error saving Backup Contacts");
+              }
+            });
+            setDate_last_Backup(date_format);
+            await AsyncStorage.setItem(STORAGE_KEY_CONTACTS_BACKUP_DATETIME, date_format);
+            console.log('Success Saving File');
+          }
+          // const readContactsBase =  await storage.readContactsBackup();
+        } catch (e) {
           console.log("Error saving the Backup");
           msgService.messagePopup(
             'Backup Contacts',
             `Erro : Desculpe, erro Salvando o backup dos contatos`,
-          );  
+          );
         }
 
       }
@@ -185,7 +174,7 @@ const Backup = ({ navigation }: any) => {
 
   const readContactsBackup = async () => {
     try {
-      if (permissionWrite){
+      if (permissionWrite) {
         console.log("Permission Read agreeded")
         const contactBackup: any = await AsyncStorage.getItem(STORAGE_KEY_CONTACTS_BACKUP);
         console.log("Getting Backup")
@@ -197,19 +186,19 @@ const Backup = ({ navigation }: any) => {
           `Total Contacts Loaded: ${contactBackup != null ? JSON.parse(contactBackup).length : 0}`,
         );
         // console.log(contactBackup);
-      }else{
+      } else {
         Alert.alert(
           'Sem permissões para salvar o Backup dos Contatos',
           `É necessário fornecer as permissões para gravar os dados no seu telefone para salvar o Backup`,
-        );        
+        );
       }
 
     } catch (e) {
       Alert.alert(
         'Falha ao ler o Backup',
         `Não foi possível ler o backup, você pode executar um novo backup antes de corrigir os contatos`,
-      );        
-  }
+      );
+    }
   };
 
   //Remove or Use service
@@ -235,23 +224,23 @@ const Backup = ({ navigation }: any) => {
       );
       await msgService.messagePopupWithCancel("Deletar Backup?", `Você irá apagar o seu backup criado em: ${date_last_Backup == null ? "Sem Data" : date_last_Backup}`, "Confirmar", "Cancelar").then((resolveReturnMsg) => {
         console.log(resolveReturnMsg);
-        if (resolveReturnMsg){
-            AsyncStorage.clear().then(async () => { 
+        if (resolveReturnMsg) {
+          AsyncStorage.clear().then(async () => {
             const contactBackup: any = await AsyncStorage.getItem(STORAGE_KEY_CONTACTS_BACKUP);
             console.log("Getting Backup, checking clear");
             // console.log(contactBackup);
-            if (contactBackup == null){
+            if (contactBackup == null) {
               setBackupExist(false)
             }
             // console.log(contactBackup);
             console.log("Finishing Backup, checking clear");
             // setBackupContacts(JSON.parse(contactBackup));
             console.log("Backup Erased");
-            msgService.messagePopup("Backup deletado!","Antes de Corrigir seus contatos, crie um novo backup por segurança");
-          }); 
-        }else{
-          msgService.messagePopup("Backup","Você cancelou a operação");          
-        } 
+            msgService.messagePopup("Backup deletado!", "Antes de Corrigir seus contatos, crie um novo backup por segurança");
+          });
+        } else {
+          msgService.messagePopup("Backup", "Você cancelou a operação");
+        }
       });
     } catch (e) {
       console.log(`Error Return: ${e}`);
@@ -278,27 +267,27 @@ const Backup = ({ navigation }: any) => {
     setContact_Backup_data(contact_Backup_data);
     date_last_Backup = await AsyncStorage.getItem(STORAGE_KEY_CONTACTS_BACKUP_DATETIME)
     setDate_last_Backup(date_last_Backup);
-    console.log(`Total Data Backup: ${contact_Backup_data != null ? JSON.parse(contact_Backup_data).length : 0} - on: ${date_last_Backup == null ? "No Data Recorded" : date_last_Backup }`);
+    console.log(`Total Data Backup: ${contact_Backup_data != null ? JSON.parse(contact_Backup_data).length : 0} - on: ${date_last_Backup == null ? "No Data Recorded" : date_last_Backup}`);
     // console.log(contact_Backup_data);    
-    if (contact_Backup_data == undefined){
+    if (contact_Backup_data == undefined) {
       setBackupExist(false);
-      if (contact_Backup_data == null){
-          let returnBackupMsg = await msgService.messagePopupWithCancel("Fazer Backup", "Você não tem um Backup dos seus contatos, deseja criar um agora", "Confirmar", "Cancelar");
-          //backupContactsLocally(contactsBackup);
-          if (returnBackupMsg){
-            backupContactsLocally();
-            // return false;
-          }else{
-            msgService.messagePopup("Sem Backup Ativo","Não esqueça de criar seu backup antes de corrigir os contatos");
-          }
-        } 
-      }else{
-        setBackupExist(true);
-        setTotalBackupContacts(JSON.parse(contact_Backup_data).length);
-        setBackupContacts(JSON.parse(contact_Backup_data));
+      if (contact_Backup_data == null) {
+        let returnBackupMsg = await msgService.messagePopupWithCancel("Fazer Backup", "Você não tem um Backup dos seus contatos, deseja criar um agora", "Confirmar", "Cancelar");
+        //backupContactsLocally(contactsBackup);
+        if (returnBackupMsg) {
+          backupContactsLocally();
+          // return false;
+        } else {
+          msgService.messagePopup("Sem Backup Ativo", "Não esqueça de criar seu backup antes de corrigir os contatos");
+        }
       }
+    } else {
+      setBackupExist(true);
+      setTotalBackupContacts(JSON.parse(contact_Backup_data).length);
+      setBackupContacts(JSON.parse(contact_Backup_data));
+    }
 
-    
+
 
   }
 
@@ -307,12 +296,12 @@ const Backup = ({ navigation }: any) => {
       <View>
         <Text style={[DefaultStyles.textDefaultInfo, DefaultStyles.marginDefautElements]}>
           Aqui faremos ou validaremos um backup dos seus contatos antes de atualiza-los (Backup Contacts Database before Update your Contacts)
-        </Text>      
-      </View>   
+        </Text>
+      </View>
       <View>
         <Text style={[DefaultStyles.textDefault, DefaultStyles.marginDefautElements]}>
           Backup Feito?:{' '}
-          {backupExist 
+          {backupExist
             ? `SIM, Total Contatos: ${totalBackupContacts} - Data Backup: ${date_last_Backup} `
             : 'NÃO, Você ainda não tem backup dos seus contatos, click para fazer o backup agora.'}
         </Text>
@@ -321,18 +310,18 @@ const Backup = ({ navigation }: any) => {
           {totalBackupContacts < totalContacts
             ? `\nVocê tem menos contatos em seu Backup que em seu telefone, talvez seja interessante executar um novo Backup`
             : ''}
-        </Text>        
-        <View  style={backupExist && totalBackupContacts >= totalContacts ? DefaultStyles.hideComponents : []}>
-          <Button 
+        </Text>
+        <View style={backupExist && totalBackupContacts >= totalContacts ? DefaultStyles.hideComponents : []}>
+          <Button
             title="Backup Contacts"
             onPress={() => {
               backupContactsLocally();
             }}
-          />          
+          />
         </View>
         <Text style={[DefaultStyles.textDefault, DefaultStyles.marginDefautElements]}>Ler o Backup dos meus contatos</Text>
         <View>
-          <Button 
+          <Button
             title="Ler Backup"
             onPress={() => {
               readContactsBackup();
@@ -349,12 +338,12 @@ const Backup = ({ navigation }: any) => {
               onPress={() => {
                 removeKey('storage_Key');
               }}
-            />          
+            />
           </View>
-        </View> 
+        </View>
         <View style={!backupExist ? DefaultStyles.hideComponents : []}>
           <Text style={[DefaultStyles.textDefault, DefaultStyles.marginDefautElements]}>Clear existents Backups</Text>
-          <Button 
+          <Button
             title="Zerar Backup"
             onPress={() => {
               clearContactsBackup();
@@ -364,13 +353,13 @@ const Backup = ({ navigation }: any) => {
       </View>
 
 
-      <View style={[DefaultStyles.bottomCenter,!backupExist ? DefaultStyles.hideComponents : null]}>
-          <Text style={[DefaultStyles.textDefaultInfo, DefaultStyles.marginDefautElements]}>
-              2⁰ Corrija seus contatos do Brasil, adicionando o código internacional +55
-          </Text>
-          <Button  onPress={() => { navigateToBackup('Home') }} title="Corrigir Contatos" >
-              </Button>
-      </View>      
+      <View style={[DefaultStyles.bottomCenter, !backupExist ? DefaultStyles.hideComponents : null, !permissionContacts ? DefaultStyles.hideComponents : null]}>
+        <Text style={[DefaultStyles.textDefaultInfo, DefaultStyles.marginDefautElements]}>
+          2⁰ Corrija seus contatos do Brasil, adicionando o código internacional +55
+        </Text> 
+        <Button onPress={() => { navigateToBackup('CountryInfo') }} title="Corrigir Contatos" >
+        </Button>
+      </View>
 
     </View>
   );

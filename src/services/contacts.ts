@@ -6,7 +6,7 @@ interface ContactStatus {
 }
 
 class ContactServices {
-  async getAll(): Promise<any> {
+  async getAllContacts(): Promise<any> {
     return await Contacts.getAll();
   }
 

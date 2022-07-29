@@ -5,8 +5,10 @@ import { RectButton } from "react-native-gesture-handler";
 import { Alert, Animated, StyleSheet, Text, View } from 'react-native';
 import { useEffect } from 'react';
 import Splash from './components/splash';
-import Home from './components/home';
+import Home from './components/fixcontacts';
 import Backup from './components/backupcontacts';
+import CountryInfo from './components/countryinfo';
+import Fixcontacts from './components/fixcontacts';
 
 // import { createStackNavigator } from '@react-navigation/stack';
 
@@ -40,8 +42,14 @@ const Routes = () => {
                          headerTintColor: '#FFF',
                          contentStyle: styles.contentDefault,}}
             />
-            <Stack.Screen name="Home" component={Home}
-              options={{ title: 'Contact Plus +' , 
+            <Stack.Screen name="CountryInfo" component={CountryInfo}
+              options={{ title: 'Configurar País DDI' , 
+                         headerStyle: styles.headerDefault, 
+                         headerTintColor: '#FFF',
+                         contentStyle: styles.contentDefault,}}
+            />
+            <Stack.Screen name="FixContacts" component={Fixcontacts}
+              options={{ title: 'Corrigir Contatos +' , 
                          headerStyle: styles.headerDefault, 
                          headerTintColor: '#FFF',
                          contentStyle: styles.contentDefault,}}

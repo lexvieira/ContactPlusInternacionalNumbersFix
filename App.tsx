@@ -1,7 +1,5 @@
 import React from 'react';
 import {StatusBar, StyleSheet, Text, View} from 'react-native';
-import Home from './src/components/home';
-import Splash from './src/components/splash';
 import Routes from './src/routes';
 
 // import {Colors} from 'react-native/Libraries/NewAppScreen';

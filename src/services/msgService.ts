@@ -2,7 +2,7 @@ import { Alert } from "react-native";
 
 class msgService {
 
-    async messagePopup(label: string, text: string){
+    messagePopup = async (label: string, text: string) => {
       Alert.alert(label, text);
       return true;
     }
