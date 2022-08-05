@@ -19,7 +19,7 @@ class ContactServices {
     await Contacts.updateContact(contact)
       .then(result => {
         console.log('Contact Updated on Service');
-        return result;
+        console.log(result);
       })
       .catch(err => {
         if (err) {
@@ -40,7 +40,7 @@ class ContactServices {
     await Contacts.editExistingContact(contact)
       .then(result => {
         console.log('Existed Contact Updated on Service');
-        return result;
+        console.log(result);
       })
       .catch(err => {
         if (err) {
@@ -61,7 +61,7 @@ class ContactServices {
     await Contacts.addContact(contact)
       .then(result => {
         console.log('Contact Creating on Service');
-        return result;
+        console.log(result);
       })
       .catch(err => {
         if (err) {
@@ -82,7 +82,7 @@ class ContactServices {
     await Contacts.deleteContact(contact)
       .then(result => {
         console.log('Contact Deleted on Service');
-        return result;
+        console.log(result);
       })
       .catch(err => {
         if (err) {
