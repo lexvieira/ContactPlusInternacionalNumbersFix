@@ -7,6 +7,8 @@ import ContactServices from '../../services/contacts';
 import DefaultStyles from "../../styles/styles";
 import msgService from '../../services/msgService';
 import storage from '../../services/storagedata';
+import backupService from '../../services/backupService';
+import utils from '../../services/utils';
 
 // interface Props {
 //   contactsBackup: Contact[];
@@ -27,8 +29,8 @@ const Backup = ({ navigation }: any) => {
   const [totalBackupContacts, setTotalBackupContacts] = useState(0);
   const [date_last_Backup, setDate_last_Backup] = useState("");
   const [contact_Backup_data, setContact_Backup_data] = useState([]);
-  let STORAGE_KEY_CONTACTS_BACKUP = '@Contacts_Backup_Phone';
-  let STORAGE_KEY_CONTACTS_BACKUP_DATETIME = '@date_last_Backup';
+  const STORAGE_KEY_CONTACTS_BACKUP = backupService.STORAGE_KEY_CONTACTS_BACKUP;
+  const STORAGE_KEY_CONTACTS_BACKUP_DATETIME = backupService.STORAGE_KEY_CONTACTS_BACKUP_DATETIME;
 
   useEffect(() => {
     console.log("Checking Permissions");
@@ -60,7 +62,7 @@ const Backup = ({ navigation }: any) => {
           setcontactsPhone(contacts);
           setTotalContacts(contacts.length);
           // Checking Contacts Backup
-          checkBackup(); 
+          checkBackup();
         })
         .catch(err => {
           if (err) {
@@ -132,16 +134,16 @@ const Backup = ({ navigation }: any) => {
       const contactsJsonFile = JSON.stringify(contactsPhone);
       let date = new Date();
       let day_backup = date.getDate();
-      let month_backup = date.getMonth();
+      let month_backup = date.getMonth()+1;
       let year_backup = date.getFullYear();
       let hour_backup = date.getHours();
       let minutes_backup = date.getMinutes();
-      let date_format = `${day_backup}/${month_backup}/${year_backup} ${hour_backup}:${minutes_backup}`
+      let date_format = `${utils.formatZerosLeft(day_backup,2)}/${utils.formatZerosLeft(month_backup,2)}/${year_backup} ${utils.formatZerosLeft(hour_backup,2)}:${utils.formatZerosLeft(minutes_backup,2)}`
       if (contactsJsonFile.length >= 0) {
         try {
           if (permissionWrite) {
             await AsyncStorage.setItem(STORAGE_KEY_CONTACTS_BACKUP, contactsJsonFile).then(async () => {
-              setBackupExist(true);            
+              setBackupExist(true);
               try {
                 const readContactsBase: any = await AsyncStorage.getItem(
                   STORAGE_KEY_CONTACTS_BACKUP,
@@ -173,28 +175,18 @@ const Backup = ({ navigation }: any) => {
   };
 
   const readContactsBackup = async () => {
-    try {
-      if (permissionWrite) {
-        console.log("Permission Read agreeded")
-        const contactBackup: any = await AsyncStorage.getItem(STORAGE_KEY_CONTACTS_BACKUP);
-        console.log("Getting Backup")
-        // console.log(contactBackup);
-        console.log("Finishing Backup")
-        setBackupContacts(contactBackup != null ? JSON.parse(contactBackup).length : 0);
-        Alert.alert(
-          'Backup lido com sucesso',
-          `Total Contacts Loaded: ${contactBackup != null ? JSON.parse(contactBackup).length : 0}`,
-        );
-        // console.log(contactBackup);
-      } else {
-        Alert.alert(
-          'Sem permissões para salvar o Backup dos Contatos',
-          `É necessário fornecer as permissões para gravar os dados no seu telefone para salvar o Backup`,
-        );
-      }
 
-    } catch (e) {
+    try {
+      const contactBackup = await backupService.readContactsBackup(STORAGE_KEY_CONTACTS_BACKUP);
+      setBackupContacts(contactBackup);
       Alert.alert(
+        'Backup lido com sucesso',
+        `Total Contacts Loaded: ${backupContacts != null ? backupContacts.length : 0}`,
+      );      
+    }
+    catch (e) {
+      console.log(e);
+      msgService.messagePopup(
         'Falha ao ler o Backup',
         `Não foi possível ler o backup, você pode executar um novo backup antes de corrigir os contatos`,
       );
@@ -356,7 +348,7 @@ const Backup = ({ navigation }: any) => {
       <View style={[DefaultStyles.bottomCenter, !backupExist ? DefaultStyles.hideComponents : null, !permissionContacts ? DefaultStyles.hideComponents : null]}>
         <Text style={[DefaultStyles.textDefaultInfo, DefaultStyles.marginDefautElements]}>
           2⁰ Corrija seus contatos do Brasil, adicionando o código internacional +55
-        </Text> 
+        </Text>
         <Button onPress={() => { navigateToBackup('CountryInfo') }} title="Corrigir Contatos" >
         </Button>
       </View>

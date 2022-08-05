@@ -15,14 +15,18 @@ import {
   KeyboardAvoidingView
 } from 'react-native';
 import { Contact } from 'react-native-contacts';
+import countryCodeList from '../../data/codecountrieslist';
+import countryCodesIndexed from '../../data/codecountries';
 import ContactServices from '../../services/contacts';
 import Navigate from '../../services/navigate';
+import utils from '../../services/utils';
 import DefaultStyles from '../../styles/styles';
 import BackupContacts from '../backupcontacts';
+import Example from '../example';
 
 const STATUS_BAR_HEIGHT: number | undefined = StatusBar.currentHeight;
 const SCREEN_HEIGHT: number = Dimensions.get('screen').height; // device height
-console.log(`Screen Height: ${SCREEN_HEIGHT}`);
+// console.log(`Screen Height: ${SCREEN_HEIGHT}`);
 const SCREEN_WIDTH: number = Dimensions.get('screen').width;
 
 const WINDOW_HEIGHT: number = Dimensions.get('window').height;
@@ -36,10 +40,9 @@ export interface PhoneNumber {
 }
 
 const CountryInfo = ({ navigation }: any) => {
-  const [countryCode, setCountryCode] = useState("");
-  const [areaCode, setAreaCode] = useState("");
-  const [countryDesc, setCountryDesc] = useState("");
-
+  const [countryCode, setCountryCode] = useState<any>("55");
+  const [areaCode, setAreaCode] = useState<any>("11");
+  const [countryDesc, setCountryDesc] = useState("BRr");
   // console.log('SCREEN_HEIGHT: ', SCREEN_HEIGHT);
   // console.log('SCREEN_WIDTH: ', SCREEN_WIDTH);
   // console.log('WINDOW_HEIGHT: ', WINDOW_HEIGHT);
@@ -49,17 +52,7 @@ const CountryInfo = ({ navigation }: any) => {
   //Calc the Screen Height - (Window Height - Status Bar.)
 
 
-  function renderContactsFixExample() {
-    if (countryCode != "" && areaCode != "" && countryDesc != "") {
-      return (
-        <View style={DefaultStyles.viewColumn}>
-          <Text style={[DefaultStyles.labelDefaultNormal, DefaultStyles.textBold]}>Exemplo de um contato corrigido</Text>
-          <Text style={[DefaultStyles.textDefaultNormal, DefaultStyles.textBold]}>Antes: André Felix 983432233</Text>
-          <Text style={[DefaultStyles.textDefaultNormal, DefaultStyles.textBold]}>Depois: André Felix ({countryDesc}) +{countryCode}{areaCode}983432233</Text>
-        </View>
-      )
-    }
-  }
+
 
   // Keyboard Over and Remove ScrollView
   return (
@@ -69,7 +62,6 @@ const CountryInfo = ({ navigation }: any) => {
         {/* <ScrollView style={[DefaultStyles.containerScreen]}> */}
         {/* <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={[{flex: 9}]}> */}
         {/* <ScrollView style={[{ flex: 1, maxHeight: Dimensions.get('screen').height }]} > */}
-
         <View style={[{ flex: 7 }, DefaultStyles.defaultContainer]}>
           <Text style={[DefaultStyles.textDefaultTitle]}>Corrigir Números Internacionais</Text>
           <Text style={[]}>Esse App serve para corrigir os números de Telefone sem Código Internacinal, você pode verificar na lista abaixo</Text>
@@ -80,7 +72,7 @@ const CountryInfo = ({ navigation }: any) => {
               </View>
               <View style={DefaultStyles.viewColumn}>
                 <TextInput
-                  style={[DefaultStyles.textInput]}
+                  style={[DefaultStyles.textInput, DefaultStyles.borderRadiosDefault]}
                   onChangeText={setCountryCode}
                   placeholder="Código do País - Ex: 55"
                   keyboardType="numeric"
@@ -93,7 +85,7 @@ const CountryInfo = ({ navigation }: any) => {
               </View>
               <View style={DefaultStyles.viewColumn}>
                 <TextInput
-                  style={[DefaultStyles.textInput]}
+                  style={[DefaultStyles.textInput, DefaultStyles.borderRadiosDefault]}
                   onChangeText={setAreaCode}
                   placeholder="Código Área - Ex: 11"
                   keyboardType="numeric"
@@ -107,7 +99,7 @@ const CountryInfo = ({ navigation }: any) => {
               </View>
               <View style={DefaultStyles.viewColumn}>
                 <TextInput
-                  style={[DefaultStyles.textInput]}
+                  style={[DefaultStyles.textInput, DefaultStyles.borderRadiosDefault]}
                   onChangeText={setCountryDesc}
                   placeholder="Descrição Ex: (BR)"
                   keyboardType="default"
@@ -115,9 +107,7 @@ const CountryInfo = ({ navigation }: any) => {
               </View>
             </View>
             <View style={[DefaultStyles.viewRow, DefaultStyles.containerVerticalSpace]}>
-              {
-                renderContactsFixExample()
-              }
+              <Example contactsExample={{ countryCode, areaCode, countryDesc }} />
             </View>
           </View>
           {/* <View style={styles.containerVerticalSpace}>
@@ -133,7 +123,7 @@ const CountryInfo = ({ navigation }: any) => {
 
         {/* </ScrollView> */}
 
-        <View style={[{ flex: 2 }, DefaultStyles.defaultContainer]}>
+        <View style={[{ flex: 2 }, DefaultStyles.defaultContainer, !countryCode ? DefaultStyles.hideComponents : null]}>
           <View style={[DefaultStyles.containerVerticalSpace, DefaultStyles.bottomCenter]}>
             <Text style={[DefaultStyles.textDefaultInfo, DefaultStyles.marginDefautElements]}>3⁰ Clique para ver os contatos que você precisa atualizar </Text>
             <Button onPress={() => { Navigate.navigateTo(navigation, 'FixContacts', { countryCode, areaCode, countryDesc }) }} title="Verifcar Contatos" >
