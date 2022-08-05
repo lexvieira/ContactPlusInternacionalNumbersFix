@@ -23,7 +23,7 @@ const DefaultStyles = StyleSheet.create({
     borderColor: '#219EBC',
     borderWidth: 0,
     margin: 2
-  },  
+  },
   marginDefautElements: {
     marginTop: 10,
     marginBottom: 10,
@@ -60,6 +60,10 @@ const DefaultStyles = StyleSheet.create({
     fontWeight: '900',
     fontSize: 17,
   },
+  textAlignCenter:
+  {
+    textAlign: 'center'
+  },
   hideComponents: {
     display: 'none',
   },
@@ -78,11 +82,11 @@ const DefaultStyles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 3,
   },
-  viewRowTitle:{
+  viewRowTitle: {
     fontWeight: 'bold',
     color: '#DE6143'
   },
-  viewRowBorder:{
+  viewRowBorder: {
     borderBottomColor: '#219EBC',
     borderBottomWidth: 1,
     paddingBottom: 2
@@ -95,13 +99,12 @@ const DefaultStyles = StyleSheet.create({
   textInput: {
     backgroundColor: 'transparent',
     // marginHorizontal: 5,
-    borderStyle: 'dashed',
+    borderStyle: 'solid',
     borderWidth: 2,
     borderBottomColor: '#219EBC',
     borderTopColor: '#219EBC',
     borderLeftColor: '#219EBC',
     borderRightColor: '#219EBC',
-    borderRadius: 3,
     color: '#219EBC',
     textAlign: 'center',
     padding: 3,
@@ -125,16 +128,28 @@ const DefaultStyles = StyleSheet.create({
   ScrollBox: {
     backgroundColor: 'transparent',
     // marginHorizontal: 5,
-    borderStyle: 'dashed',
+    borderStyle: 'solid',
     borderWidth: 2,
     borderBottomColor: '#219EBC',
     borderTopColor: '#219EBC',
     borderLeftColor: '#219EBC',
     borderRightColor: '#219EBC',
-    borderRadius: 3,
     color: '#219EBC',
     textAlign: 'center',
-    padding: 3,    
+    padding: 3,
+    marginBottom: 3,
+  },
+  buttonDefault: {
+    padding: 1,
+    marginLeft: 3,
+    marginRight: 3,
+    // borderRadius: 5,
+  }
+  , borderRadiosDefault:
+  {
+    borderRadius: 3,
+    borderWidth: 2,
+    borderColor: '#219EBC'
   }
 });
 export default DefaultStyles;
