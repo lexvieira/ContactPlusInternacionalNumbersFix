@@ -32,29 +32,27 @@ const Backup = ({ navigation }: any) => {
   const STORAGE_KEY_CONTACTS_BACKUP = backupService.STORAGE_KEY_CONTACTS_BACKUP;
   const STORAGE_KEY_CONTACTS_BACKUP_DATETIME = backupService.STORAGE_KEY_CONTACTS_BACKUP_DATETIME;
 
+  // Checking Permissions to read and save files
   useEffect(() => {
-    console.log("Checking Permissions");
+    // console.log("Checking Permissions");
     checkPermissions();
-    console.log("Checking Permissions Finish");
+    // console.log("Checking Permissions Finish");
   }, []);
 
+  //Getting Phone Contacts
   useEffect(() => {
-    console.log("Getting Contacts");
+    // console.log("Getting Contacts");
     getContacts();
-    console.log("Getting Contacts Finish");
+    // console.log("Getting Contacts Finish");
   }, [permissionContacts]);
 
-  // useEffect(() => {
-  //   console.log("Checking Backup");
-  //   // checkBackup();
-  //   console.log("Checking Backup Finish");
-  // }, [backupExist, totalBackupContacts]);
-
+  // Navigate Next Screen -> Remove Next Version
   const navigateToBackup = (screen: string) => {
     // msgService.messagePopup("1 - Backup", "Você está sendo redirecionado para a Tela de Backup");
     navigation.navigate(screen, { advance: 'ok' });
   }
 
+  //Getting Contacts
   function getContacts() {
     if (permissionContacts) {
       ContactServices.getAllContacts()
@@ -73,6 +71,7 @@ const Backup = ({ navigation }: any) => {
   }
   //   var db = openDatabase({name: 'ContactsBackupPlus.db'});
 
+  //Checking Permissions -> Remove Next Version
   const checkPermissions = async () => {
     await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS, {
       title: 'Contacts',
@@ -81,10 +80,10 @@ const Backup = ({ navigation }: any) => {
       buttonNegative: 'Cancel',
       buttonPositive: 'OK',
     }).then(() => {
-      console.log("Permission to Write Contacts Granted");
+      // console.log("Permission to Write Contacts Granted");
       setpermissionContacts(true);
     }).catch(() => {
-      console.log(`Permission Denied to Save`);
+      // console.log(`Permission Denied to Save`);
       msgService.messagePopup(
         'Backup Contacts',
         `Permissões para salvar os contatos negada`,
@@ -99,9 +98,9 @@ const Backup = ({ navigation }: any) => {
       buttonPositive: 'OK',
     }).then(async () => {
       setpermissionWrite(true);
-      console.log("Permission Write agreeded")
+      // console.log("Permission Write agreeded")
     }).catch(() => {
-      console.log(`Permission Denied to Save`);
+      // console.log(`Permission Denied to Save`);
       msgService.messagePopup(
         'Backup Contacts',
         `Permissões para salvar os contatos negada`,
@@ -116,7 +115,7 @@ const Backup = ({ navigation }: any) => {
       buttonPositive: 'OK',
     }).then(async () => {
       setpermissionRead(true);
-      console.log("Permission Read agreeded");
+      // console.log("Permission Read agreeded");
     }).catch(() => {
       msgService.messagePopup(
         'Backup Contacts',
@@ -126,9 +125,8 @@ const Backup = ({ navigation }: any) => {
 
   }
 
-  // checkPermissions();
-  // getContacts();
-
+  //#region 
+  //Backup Contacts
   const backupContactsLocally = async () => {
     try {
       const contactsJsonFile = JSON.stringify(contactsPhone);
@@ -152,16 +150,16 @@ const Backup = ({ navigation }: any) => {
                 setBackupContacts(JSON.parse(readContactsBase));
                 setTotalBackupContacts(JSON.parse(readContactsBase).length);
               } catch (e) {
-                console.log("Error saving Backup Contacts");
+                // console.log("Error saving Backup Contacts");
               }
             });
             setDate_last_Backup(date_format);
             await AsyncStorage.setItem(STORAGE_KEY_CONTACTS_BACKUP_DATETIME, date_format);
-            console.log('Success Saving File');
+            // console.log('Success Saving File');
           }
           // const readContactsBase =  await storage.readContactsBackup();
         } catch (e) {
-          console.log("Error saving the Backup");
+          // console.log("Error saving the Backup");
           msgService.messagePopup(
             'Backup Contacts',
             `Erro : Desculpe, erro Salvando o backup dos contatos`,
@@ -170,10 +168,10 @@ const Backup = ({ navigation }: any) => {
 
       }
     } catch (e) {
-      console.log(`Error Return: ${e}`);
+      // console.log(`Error Return: ${e}`);
     }
   };
-
+  //Read Contacts
   const readContactsBackup = async () => {
 
     try {
@@ -185,49 +183,33 @@ const Backup = ({ navigation }: any) => {
       );      
     }
     catch (e) {
-      console.log(e);
+      // console.log(e);
       msgService.messagePopup(
         'Falha ao ler o Backup',
         `Não foi possível ler o backup, você pode executar um novo backup antes de corrigir os contatos`,
       );
     }
   };
-
-  //Remove or Use service
-  const readContactsBackup2 = async () => {
-    try {
-      const contact_Backup_data: any = await storage.readContactsBackup().then(() => {
-        setBackupContacts(JSON.parse(contact_Backup_data));
-        Alert.alert(
-          'Backup lido com sucesso',
-          `Total Contacts Loaded: ${backupContacts.length}`,
-        );
-      });
-      // console.log(contact_Backup_data);
-    } catch (e) {
-      console.log(`Error Return: ${e}`);
-    }
-  };
-
+  //ClearContacts
   const clearContactsBackup = async () => {
     try {
       const date_last_Backup: any = await AsyncStorage.getItem(
         STORAGE_KEY_CONTACTS_BACKUP_DATETIME,
       );
       await msgService.messagePopupWithCancel("Deletar Backup?", `Você irá apagar o seu backup criado em: ${date_last_Backup == null ? "Sem Data" : date_last_Backup}`, "Confirmar", "Cancelar").then((resolveReturnMsg) => {
-        console.log(resolveReturnMsg);
+        // console.log(resolveReturnMsg);
         if (resolveReturnMsg) {
           AsyncStorage.clear().then(async () => {
             const contactBackup: any = await AsyncStorage.getItem(STORAGE_KEY_CONTACTS_BACKUP);
-            console.log("Getting Backup, checking clear");
+            // console.log("Getting Backup, checking clear");
             // console.log(contactBackup);
             if (contactBackup == null) {
               setBackupExist(false)
             }
             // console.log(contactBackup);
-            console.log("Finishing Backup, checking clear");
+            // console.log("Finishing Backup, checking clear");
             // setBackupContacts(JSON.parse(contactBackup));
-            console.log("Backup Erased");
+            // console.log("Backup Erased");
             msgService.messagePopup("Backup deletado!", "Antes de Corrigir seus contatos, crie um novo backup por segurança");
           });
         } else {
@@ -235,20 +217,20 @@ const Backup = ({ navigation }: any) => {
         }
       });
     } catch (e) {
-      console.log(`Error Return: ${e}`);
+      // console.log(`Error Return: ${e}`);
     }
   };
-
+  //Remove Backup Keys => Internal -> Not Used
   const removeKey = async (keyString: string) => {
     try {
       await AsyncStorage.removeItem(`@${keyString}`);
-      console.log(`Key ${keyString} Removed`);
+      // console.log(`Key ${keyString} Removed`);
       return true;
     } catch (e) {
-      console.log(`Error Removing Backup ${keyString}: ${e}`);
+      // console.log(`Error Removing Backup ${keyString}: ${e}`);
     }
   };
-
+  //Check if Backup exist 
   const checkBackup = async () => {
     let date_last_Backup: any;
     let contact_Backup_data: any = await AsyncStorage.getItem(
@@ -259,7 +241,7 @@ const Backup = ({ navigation }: any) => {
     setContact_Backup_data(contact_Backup_data);
     date_last_Backup = await AsyncStorage.getItem(STORAGE_KEY_CONTACTS_BACKUP_DATETIME)
     setDate_last_Backup(date_last_Backup);
-    console.log(`Total Data Backup: ${contact_Backup_data != null ? JSON.parse(contact_Backup_data).length : 0} - on: ${date_last_Backup == null ? "No Data Recorded" : date_last_Backup}`);
+    // console.log(`Total Data Backup: ${contact_Backup_data != null ? JSON.parse(contact_Backup_data).length : 0} - on: ${date_last_Backup == null ? "No Data Recorded" : date_last_Backup}`);
     // console.log(contact_Backup_data);    
     if (contact_Backup_data == undefined) {
       setBackupExist(false);
@@ -282,6 +264,7 @@ const Backup = ({ navigation }: any) => {
 
 
   }
+  //#endregion
 
   return (
     <View style={[DefaultStyles.container, styles.backupView]}>

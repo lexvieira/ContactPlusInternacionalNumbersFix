@@ -40,9 +40,9 @@ export interface PhoneNumber {
 }
 
 const CountryInfo = ({ navigation }: any) => {
-  const [countryCode, setCountryCode] = useState<any>("55");
-  const [areaCode, setAreaCode] = useState<any>("11");
-  const [countryDesc, setCountryDesc] = useState("BRr");
+  const [countryCode, setCountryCode] = useState<any>();
+  const [areaCode, setAreaCode] = useState<any>();
+  const [countryDesc, setCountryDesc] = useState("");
   // console.log('SCREEN_HEIGHT: ', SCREEN_HEIGHT);
   // console.log('SCREEN_WIDTH: ', SCREEN_WIDTH);
   // console.log('WINDOW_HEIGHT: ', WINDOW_HEIGHT);

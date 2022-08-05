@@ -12,15 +12,12 @@ interface Props {
     };
 }
 
-// const BackupContacts: React.FC<Props> = ({ contactsBackup }: Props) => {
-
 const Example: React.FC<Props> = ({ contactsExample }: Props) => {
     const countryCode = contactsExample.countryCode;
     const areaCode = contactsExample.areaCode;
     const countryDesc = contactsExample.countryDesc;
     const [countryDetails, setCountryDetails] = useState<countryDetails[]>();
     const [areaBRDDD, setAreaBRDDD] = useState("");
-
 
     const getCountryDetails = async (country_code: number) => {
         let country_details = await utils.filterCountry(country_code);

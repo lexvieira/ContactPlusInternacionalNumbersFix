@@ -24,7 +24,6 @@ import Example from '../example';
 import utils, { countryDetails } from '../../services/utils';
 import area_br from '../../data/codearelist';
 
-
 const STATUS_BAR_HEIGHT: number | undefined = StatusBar.currentHeight;
 const SCREEN_HEIGHT: number = Dimensions.get('screen').height; // device height
 // console.log(`Screen Height: ${SCREEN_HEIGHT}`);
@@ -117,24 +116,6 @@ const Fixcontacts = ({ route, navigation }: any) => {
     updateContactsInternationalCode(contact);
   }
 
-  //Remove
-  function fixContactInfo(contact: Contact) {
-    let contactInfo = contact;
-    let contactPhoneNumbers = contactInfo.phoneNumbers;
-    let contactNeedUpdate = false;
-    //Before Update
-    console.log(contactPhoneNumbers[0]);
-    console.log(contactPhoneNumbers[1]);
-    let contactNumber = contactPhoneNumbers[1];
-    let contaNumberLength = contactPhoneNumbers.length;
-    contactPhoneNumbers = [];
-    contactPhoneNumbers.push(contactNumber);
-    contactInfo.phoneNumbers = contactPhoneNumbers;
-    contactInfo.givenName = contactInfo.givenName + " (BR)";
-    ContactDeletePhone(contact);
-    ContactAddNewPhone(contactInfo);
-  }
-
   //Fix the international codes from Brazil
   function updateSingleContactsInternationalCode(contact: Contact, indexContactNumber: number) {
     let contactInfo = contact;
@@ -144,8 +125,6 @@ const Fixcontacts = ({ route, navigation }: any) => {
     contactPhoneNumbers.forEach((phoneNumber, index) => {
       if (index == indexContactNumber) {
         if (phoneNumber.number?.substring(0, 1) !== '+') {
-          console.log('PhoneID:' + contactInfo.recordID);
-          console.log('Old Number: ' + phoneNumber.number);
           contactNeedUpdate = true;
           let phoneNumberFixed = numberPhoneRules(phoneNumber.number);
           phoneNumber.number = phoneNumberFixed.phoneNumberUpdate;
@@ -153,16 +132,15 @@ const Fixcontacts = ({ route, navigation }: any) => {
       }
     });
 
-    console.log(contactPhoneNumbers);
-
     // Update Contacts in the Phone 
-    console.log('Update Contact on Telephone');
+    // console.log('Update Contact on Telephone');
     contactInfo.phoneNumbers = contactPhoneNumbers;
-    console.log(contactInfo);
+    // console.log(contactInfo);
     if (contactNeedUpdate) {
-      contactInfo.givenName = contactInfo.givenName + " (BR)";
+      contactInfo.givenName = contactInfo.givenName + " ${countryDesc}";
 
       // Verifying if Bug about Update Contact with React Native was solved 
+      // Bug React Native Solved, not necessary Delete and Add a new one
       // ContactDeletePhone(contact);
       // ContactAddNewPhone(contactInfo);
       ContactUpdatePhone(contactInfo).then(() => {
@@ -180,25 +158,23 @@ const Fixcontacts = ({ route, navigation }: any) => {
     //Fix Contact Numbers based on the rules in the function numberPhoneRules()
     contactPhoneNumbers.forEach((phoneNumber, index) => {
       if (phoneNumber.number == contactInfo.displayName) {
-        console.log("Invalid Number");
+        // console.log("Invalid Number");
         contactPhoneNumbers.shift();
       } else if (phoneNumber.number?.substring(0, 1) !== '+') {
-        console.log('PhoneID:' + contactInfo.recordID);
-        console.log('Old Number: ' + phoneNumber.number);
+        // console.log('PhoneID:' + contactInfo.recordID);
+        // console.log('Old Number: ' + phoneNumber.number);
         contactNeedUpdate = true;
         let phoneNumberFixed = numberPhoneRules(phoneNumber.number);
         phoneNumber.number = phoneNumberFixed.phoneNumberUpdate;
       }
     });
 
-    console.log(contactPhoneNumbers);
-
     // Update Contacts in the Phone 
-    console.log('Update Contact on Telephone');
+    // console.log('Update Contact on Telephone');
     contactInfo.phoneNumbers = contactPhoneNumbers;
-    console.log(contactInfo);
+    // console.log(contactInfo);
     if (contactNeedUpdate) {
-      contactInfo.givenName = contactInfo.givenName + " (BR)";
+      contactInfo.givenName = contactInfo.givenName + ` ${countryDesc}`;
       // ContactDeletePhone(contact);
       // ContactAddNewPhone(contactInfo);
 
@@ -212,7 +188,7 @@ const Fixcontacts = ({ route, navigation }: any) => {
   async function ContactAddNewPhone(Contact: Contact) {
     let contactUpdateValidation = await ContactServices.addContact(Contact);
     if (contactUpdateValidation.status === true) {
-      console.log('Contact Updated Sucessfully');
+      // console.log('Contact Updated Sucessfully');
     }
   }
 
@@ -221,7 +197,7 @@ const Fixcontacts = ({ route, navigation }: any) => {
   async function ContactDeletePhone(Contact: Contact) {
     let contactUpdateValidation = await ContactServices.deleteContact(Contact);
     if (contactUpdateValidation.status === true) {
-      console.log('Contact Updated Sucessfully');
+      msgService.messagePopup("Contato Atualizado", "Contato Deletado com Sucesso")
     }
   }
 
@@ -229,7 +205,7 @@ const Fixcontacts = ({ route, navigation }: any) => {
   async function ContactUpdatePhone(Contact: Contact) {
     let contactUpdateValidation = await ContactServices.updateContact(Contact);
     if (contactUpdateValidation.status === true) {
-      console.log('Contact Updated Sucessfully');
+      msgService.messagePopup("Contato Atualizado", "Contato Atualizado com Sucesso")
     }
   }
 
@@ -324,7 +300,7 @@ const Fixcontacts = ({ route, navigation }: any) => {
       });
     }
     catch (e) {
-      console.log(e);
+      // console.log(e);
       msgService.messagePopup(
         'Falha ao ler o Backup',
         `Não foi possível ler o backup, você pode executar um novo backup antes de corrigir os contatos`,
@@ -333,9 +309,9 @@ const Fixcontacts = ({ route, navigation }: any) => {
   };
 
   async function restoreContactsBackup() {
-    console.log(`Total Backup Contacts: ${backupContacts.length}`);
+    // console.log(`Total Backup Contacts: ${backupContacts.length}`);
     if (backupContacts.length > 0) {
-      console.log(`Total Backup Contacts: ${backupContacts.length}`);
+      // console.log(`Total Backup Contacts: ${backupContacts.length}`);
       await msgService.messagePopupWithCancel(
         'Backup lido com sucesso, Restaurar?,',
         `Total Contacts Loaded: ${backupContacts != null ? backupContacts.length : 0}\n Você deseja continuar com a Restauração dos Contatos?`,
@@ -343,7 +319,7 @@ const Fixcontacts = ({ route, navigation }: any) => {
         'Cancelar',
       ).then((confirmRestore) => {
         if (confirmRestore) {
-          console.log(backupContacts.length);
+          // console.log(backupContacts.length);
           //Erasing Contacts to Restore
           contactList.forEach((contact) => {
             ContactDeletePhone(contact);
@@ -353,10 +329,10 @@ const Fixcontacts = ({ route, navigation }: any) => {
             ContactAddNewPhone(contact);
           });
           msgService.messagePopup("Restaurar Contatos", "Concluído com sucesso").then((confirm) => {
-            console.log("Contacts Restored");
+            // console.log("Contacts Restored");
           });
         } else {
-          console.log("Cancelled");
+          // console.log("Cancelled");
         }
         // if (confirmRestore) {
         //   contactBackup.forEach((contact, index) => {

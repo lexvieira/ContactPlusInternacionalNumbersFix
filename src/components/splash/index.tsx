@@ -5,13 +5,8 @@ import DefaultStyles from '../../styles/styles';
 
 const Splash = ({ navigation }: any) => {
     const navigateToBackup = (screen: string) => {
-        // msgService.messagePopup("1 - Backup", "Você está sendo redirecionado para a Tela de Backup");
         navigation.navigate(screen, { advance: 'ok' });
     }
-    
-    //Include here the permissions
-    //PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
-    //PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
 
     return (
         <>
@@ -21,8 +16,10 @@ const Splash = ({ navigation }: any) => {
                     um aplicativo para corrigir seus contatos do Brasil/Outros Países depois de você mudar
                     de país ou reinstalar o Whatsapp ou outro app de conversa em outro país.
                 </Text>
-                <Text style={[styles.textDefault, styles.marginDefautElements]}>Em breve, lista de países para ficar mais facíl a seleção, multilinguagem e outras opções.
-                </Text>                
+                <Text style={[DefaultStyles.textDefault, DefaultStyles.marginDefautElements]}>Será necessário conceder a permissão para ler seus contatos e salvar dados. 
+                </Text>      
+                <Text style={[DefaultStyles.textDefault, DefaultStyles.marginDefautElements, DefaultStyles.textBold]}>Não se preocupe os contatos só são salvos no Telefone e não são enviados para nenhum outro lugar.
+                </Text>                             
             </View>  
             <View style={[DefaultStyles.bottomCenter,DefaultStyles.container]}>
                 <Text style={[DefaultStyles.textDefaultInfo, styles.marginDefautElements]}>
@@ -49,7 +46,6 @@ const styles = StyleSheet.create({
     buttonNext: {
         backgroundColor: '#FFF'
     },
-
     textDefaultTitle: {
         marginTop: 10,
         color: '#219EBC',

@@ -11,7 +11,7 @@ class storage{
         return resolve(JSON.parse(contact_Backup_data));
       });
     } catch (e) {
-      console.log(`Error Return: ${e}`);
+      // console.log(`Error Return: ${e}`);
       return resolve(JSON.parse(""));
     }
   });

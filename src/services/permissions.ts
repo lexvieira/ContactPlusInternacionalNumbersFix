@@ -1,7 +1,6 @@
 import { PermissionsAndroid } from "react-native";
 import msgService from "./msgService";
 
-
 //Implement
 class checkPermissions {
     checkPermissionsContacts = async () => {
@@ -12,10 +11,10 @@ class checkPermissions {
             buttonNegative: 'Cancel',
             buttonPositive: 'OK',
         }).then(() => {
-            console.log("Permission to Write Contacts Granted");
+            // console.log("Permission to Write Contacts Granted");
             return true;
         }).catch(() => {
-            console.log(`Permission Denied to Save`);
+            // console.log(`Permission Denied to Save`);
             msgService.messagePopup(
                 'Backup Contacts',
                 `Permissões para salvar os contatos negada`,
@@ -31,10 +30,10 @@ class checkPermissions {
             buttonNegative: 'Cancel',
             buttonPositive: 'OK',
         }).then(async () => {
+            // console.log("Permission Write agreeded")            
             return true;
-            console.log("Permission Write agreeded")
         }).catch(() => {
-            console.log(`Permission Denied to Save`);
+            // console.log(`Permission Denied to Save`);
             msgService.messagePopup(
                 'Backup Contacts',
                 `Permissões para salvar os contatos negada`,
@@ -52,7 +51,7 @@ class checkPermissions {
             buttonPositive: 'OK',
         }).then(async () => {
             return true;
-            console.log("Permission Read agreeded");
+            // console.log("Permission Read agreeded");
         }).catch(() => {
             msgService.messagePopup(
                 'Backup Contacts',

@@ -18,14 +18,15 @@ class ContactServices {
 
     await Contacts.updateContact(contact)
       .then(result => {
-        console.log('Contact Updated on Service');
-        console.log(result);
+        // console.log('Contact Updated on Service');
+        // console.log(result);
+        return contactStatus
       })
       .catch(err => {
         if (err) {
           contactStatus.status = false;
           contactStatus.message = 'Error Updating Contact';
-          console.log(err);
+          // console.log(err);
         }
       });
       return contactStatus;
@@ -39,14 +40,14 @@ class ContactServices {
 
     await Contacts.editExistingContact(contact)
       .then(result => {
-        console.log('Existed Contact Updated on Service');
-        console.log(result);
+        // console.log('Existed Contact Updated on Service');
+        // console.log(result);
       })
       .catch(err => {
         if (err) {
           contactStatus.status = false;
           contactStatus.message = 'Error Updating Existed Contact';
-          console.log(err);
+          // console.log(err);
         }
       });
       return contactStatus;
@@ -60,14 +61,14 @@ class ContactServices {
 
     await Contacts.addContact(contact)
       .then(result => {
-        console.log('Contact Creating on Service');
-        console.log(result);
+        // console.log('Contact Creating on Service');
+        // console.log(result);
       })
       .catch(err => {
         if (err) {
           contactStatus.status = false;
           contactStatus.message = 'Error Creating Contact';
-          console.log(err);
+          // console.log(err);
         }
       });
       return contactStatus;
@@ -81,14 +82,14 @@ class ContactServices {
 
     await Contacts.deleteContact(contact)
       .then(result => {
-        console.log('Contact Deleted on Service');
-        console.log(result);
+        // console.log('Contact Deleted on Service');
+        // console.log(result);
       })
       .catch(err => {
         if (err) {
           contactStatus.status = false;
           contactStatus.message = 'Error Deleting Contact';
-          console.log(err);
+          // console.log(err);
         }
       });
       return contactStatus;
