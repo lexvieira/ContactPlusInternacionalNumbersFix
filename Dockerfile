@@ -6,6 +6,8 @@ RUN apt-get update
 
 RUN npm install -g react-native-cli
 
+RUN npm install -g expo-cli
+
 ENV PATH="$(npm global bin):$PATH"
 
 RUN apt update  && apt install  -y --no-install-recommends \
@@ -33,7 +35,6 @@ ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV CMAKE_BIN_PATH=${ANDROID_HOME}/cmake/$CMAKE_VERSION/bin
 ENV PATH=${ANDROID_NDK}:${CMAKE_BIN_PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/emulator:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:/opt/buck/bin/:${PATH}
 
-
 # Full reference at https://dl.google.com/android/repository/repository2-1.xml
 # download and unpack android
 # workaround buck clang version detection by symlinking
@@ -53,7 +54,6 @@ RUN curl -sS https://dl.google.com/android/repository/${SDK_VERSION} -o /tmp/sdk
     && rm -rf ${ANDROID_HOME}/.android \
     && chmod 777 -R ${ANDROID_HOME} \
     && ln -s ${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/9.0.9 ${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/lib64/clang/9.0.8
-
 
 # install usb utils
 RUN apt update  && apt install  -y --no-install-recommends \
