@@ -7,11 +7,11 @@ class BackupServices {
   
     readContactsBackup = async (STORAGE_KEY: string) => {
         try {
-            console.log("Permission Read agreeded")
+            // console.log("Permission Read agreeded")
             const contactBackup: any = await AsyncStorage.getItem(STORAGE_KEY);
-            console.log("Getting Backup")
+            // console.log("Getting Backup")
             // console.log(contactBackup);
-            console.log("Finishing Backup")
+            // console.log("Finishing Backup")
             return JSON.parse(contactBackup);
             // Alert.alert(
             //   'Backup lido com sucesso',

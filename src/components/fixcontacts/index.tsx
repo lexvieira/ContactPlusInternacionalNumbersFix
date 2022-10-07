@@ -64,12 +64,11 @@ const Fixcontacts = ({ route, navigation }: any) => {
 
   //Backup State
   const [backupContacts, setBackupContacts] = useState<Contact[]>([]);
-
-
   // setCountryCode(paramContact.countryCode);
   // setAreaCode(route.areaCode);
   // setCountryDesc(route.countryDesc);
 
+  // Checking the Screen Dimensions
   // console.log('SCREEN_HEIGHT: ', SCREEN_HEIGHT);
   // console.log('SCREEN_WIDTH: ', SCREEN_WIDTH);
   // console.log('WINDOW_HEIGHT: ', WINDOW_HEIGHT);
