@@ -9,11 +9,11 @@ Quando nos mudamos de um país para outro e nossos contatos não possuem o códi
 
 O que está acontecendo é seu contato na sua lista de contatos, Google ou o que for salvo sem o código internacional do Brasil ou de outro país onde você conseguiu o contato. Então, se você salvar seu contato como Felipe, número 119 8764 2232 em São Paulo, quando você se mudar para outro país, por exemplo, Irlanda, ele se torna Felipe +353 11987642232, +353 é o código do país para a Irlanda, e assim por diante.
 
-<img src="readmefiles/img01.jpg" style="width: 20%" >
-<img src="readmefiles/img02.jpg" style="width: 20%" >
-<img src="readmefiles/img03.jpg" style="width: 20%" >
-<img src="readmefiles/img04.jpg" style="width: 20%" >
-<img src="readmefiles/img05.jpg" style="width: 20%" >
+<img src="readmefiles/img01.jpg" style="width: 20%" > | 
+<img src="readmefiles/img02.jpg" style="width: 20%" > | 
+<img src="readmefiles/img03.jpg" style="width: 20%" > | 
+<img src="readmefiles/img04.jpg" style="width: 20%" > |
+<img src="readmefiles/img05.jpg" style="width: 20%" > |
 
 Você pode processar contato por contato ou corrigir todos os contatos de uma só vez. OK, pense que basicamente seus contatos sem um código de país devem vir do seu país de origem.
 
