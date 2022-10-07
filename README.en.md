@@ -9,7 +9,11 @@ When we move from one country to another and our contacts don't have the interna
 
 What is happening is your contact in your contact list, Google or whatever is saved without the international code from Brazil or other country where you got the contact. So if you save your contact as Felipe, number 119 8764 2232 in São Paulo, when you move to another country for example, Ireland, it becomes, Felipe +353 11987642232, +353 is the country code for Ireland, and so on.
 
-<img src="readmefiles/contactplus.jpg" style="width: 20%" >
+<img src="readmefiles/img01.jpg" style="width: 20%" >
+<img src="readmefiles/img02.jpg" style="width: 20%" >
+<img src="readmefiles/img03.jpg" style="width: 20%" >
+<img src="readmefiles/img04.jpg" style="width: 20%" >
+<img src="readmefiles/img05.jpg" style="width: 20%" >
 
 You can process contact by contact or fix all the contacts at once. OK, think that basically your contacts without an country code must come from your origin country.
 
@@ -20,6 +24,8 @@ When the app finish process if your contacts of your origin country, in my case 
 
 ## Need to Improve
 * List of cities 
-* list of countries codes.
+* list of countries codes (It is possible to identify the countries when we type the code, inserting automatically the flag and the description).
+* Update the View to FlatList to visualize many contacts
+* Improve the input text to allow nulls on ON|OFF
  
 
